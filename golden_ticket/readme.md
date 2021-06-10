@@ -4,20 +4,10 @@ There is a candy shop that sells chocolate so fancy, they are sold in golden wra
 
 Write a function that calculates how many chocolates you are able to eat, based on a given price per choclate and how much money you have.
 
-Internal questions
-- Did they ask for price?
-- Did they hardcode price, or have a param?
-- Did they add a test?
-
 ## Step 2: Add wrapper exchange for more chocolates
 Because of fancy gold wrappers, the store now takes empty wrappers in exchange for more chocolate. But customers eat the chocolates in the store and exchange immediately instead.
 
 Given a number of wrappers per chocolate, update the function to include chocolates for exchange wrappers.
-
-Internal questions
-- Did they encode wrapper exchange rate?
-- Loop or recursion? Did they explain why?
-- Are they guarding against bad values? Justifying their reasons?
 
 ## Part 3: Test Cases
 What test should be added to ensure correctness? Candidate should come up with some of these on their own.
@@ -31,3 +21,14 @@ What test should be added to ensure correctness? Candidate should come up with s
 - no money
 - not enough wrappers
 - infinite money
+
+## Internal Questions
+### Part 1
+- Did they ask for price?
+- Did they hardcode price, or have a param?
+- Did they add a test?
+
+### Part 2
+- Did they encode wrapper exchange rate?
+- Loop or recursion? Did they explain why?
+- Are they guarding against bad values? Justifying their reasons?

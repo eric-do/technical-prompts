@@ -3,14 +3,10 @@ class Solution:
         if ppc <= 0:
             return 0
 
-        total_chocolates = self.exchange_currency_for_chocolate(ppc, wallet)
-        remaining_chocolates = chocolates_from_wrappers = total_chocolates
+        self.ppc = ppc
+        self.wpc = wpc
 
-        while chocolates_from_wrappers > 0:
-            chocolates_from_wrappers = self.exchange_currency_for_chocolate(wpc, remaining_chocolates)
-            remaining_chocolates -= chocolates_from_wrappers * wpc
-            remaining_chocolates += chocolates_from_wrappers
-            total_chocolates += chocolates_from_wrappers
+        total_chocolates = self.exchange_currency_for_chocolate(ppc, wallet)
 
         return total_chocolates
 
@@ -18,7 +14,10 @@ class Solution:
         if total_units < units_per_chocolate:
             return 0
 
-        return 1 + self.exchange_currency_for_chocolate(units_per_chocolate, total_units - units_per_chocolate)
+        chocolates = self.exchange_currency_for_chocolate(units_per_chocolate, total_units - units_per_chocolate)
+        additional_chocolates = self.exchange_currency_for_chocolate(self.wpc, chocolates)
+
+        return chocolates + additional_chocolates
 
 
     def assert_equals(self, actual: int, expected: int, description='No description') -> None:
