@@ -5,9 +5,18 @@
 # Implement Blackjack using OOP
 
 from collections import namedtuple
+from typing import NamedTuple
 from random import shuffle
 
-Card = namedtuple('Card', ['rank', 'suit'])
+# Card = namedtuple('Card', ['rank', 'suit'])
+
+
+class Card(NamedTuple):
+    rank: str
+    suit: str
+
+    def __str__(self):
+        return "{} of {}".format(self.rank, self.suit)
 
 
 class Deck:
@@ -44,6 +53,9 @@ class Hand:
     def __getitem__(self, position) -> Card:
         return self.__hand[position]
 
+    def __repr__(self) -> str:
+        return '\n'.join([str(c) for c in self.__hand])
+
     def get_hand(self) -> list[Card]:
         return self.__hand
 
@@ -76,17 +88,17 @@ class BlackJackHand(Hand):
 
     def get_score(self) -> int:
         score = 0
-
         cards = [self.values[rank] for rank, _ in self.get_hand()]
         aces = [self.values[rank] for rank, _ in self.get_hand()
                 if rank == "A"]
-
         score += sum(cards)
         for _ in aces:
             if score > 21:
                 score -= 10
-
         return score
+
+    def is_busted(self) -> bool:
+        return self.get_score() > 21
 
 
 class Player:
@@ -124,23 +136,34 @@ class Dealer(Player):
 
 
 class Game:
-    def __init__(self, funds: int):
+    def __init__(self, funds: int = 1000000):
         self.dealer = Dealer(funds)
-        self.__players = []
+        self.is_active = False
 
     def add_player(self) -> None:
-        name = input("Please enter your name")
-        funds = input("Please enter your starting funds")
+        name = input("Please enter your name:\n")
+        funds = input("Please enter your starting funds: \n")
         p = Player(name, funds)
-        self.__players.append(p)
+        self.player = p
         print("Player added.")
 
-    def get_players(self) -> list[Player]:
-        return self.__players
+    def create_deck(self) -> None:
+        self.__deck = Deck()
+
+    def deal_hands(self) -> None:
+        self.dealer.deal_hand(self.dealer, self.__deck)
+        self.dealer.deal_hand(self.player, self.__deck)
+        print('Your hand:')
+        print(self.player.get_hand())
 
     def start_new_game(self) -> None:
+        self.is_active = True
         print("Welcome to Blackjack")
         self.add_player()
-        self.dealer.deal_hand(self.dealer, self.__deck)
-        for p in self.players:
-            self.dealer.deal_hand(p, self.__deck)
+        self.create_deck()
+        self.__deck.shuffle()
+        self.deal_hands()
+
+
+# game = Game()
+# game.start_new_game()

@@ -54,6 +54,7 @@ class TestBlackJackHand:
         hand.add_card(Card('A', 'Spades'))
         hand.add_card(Card('K', 'Spades'))
         assert hand.get_score() == 21
+        assert hand.is_busted() is False
 
         hand.add_card(Card('A', 'Diamonds'))
         assert hand.get_score() == 12
@@ -63,6 +64,10 @@ class TestBlackJackHand:
 
         hand.add_card(Card('A', 'Hearts'))
         assert hand.get_score() == 18
+
+        hand.add_card(Card('10', 'Hearts'))
+        assert hand.get_score() == 28
+        assert hand.is_busted() is True
 
 
 class TestPlayer:
