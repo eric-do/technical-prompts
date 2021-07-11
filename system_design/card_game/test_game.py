@@ -1,4 +1,4 @@
-from card_game import Deck, Card, Dealer, Hand, BlackJackHand
+from card_game import Deck, Card, Dealer, Hand, BlackJackHand, Player
 
 
 class TestDeck:
@@ -66,11 +66,39 @@ class TestBlackJackHand:
 
 
 class TestPlayer:
-    pass
+
+    def test_player_initialization(self):
+        p = Player("Eric", 1000)
+        assert p.name == "Eric"
+        assert p.get_funds() == 1000
+        assert len(p.get_hand()) == 0
+
+    def test_deal_player(self):
+        p = Player("Eric", 1000)
+        p.add_card(Card('A', 'Spades'))
+        p.add_card(Card('K', 'Spades'))
+        assert p.get_score() == 21
+        assert len(p.get_hand()) == 2
 
 
 class TestDealer:
-    pass
+
+    def test_dealer_initialization(self):
+        d = Dealer(1000000)
+        assert d.name == "Dealer"
+        assert d.get_funds() == 1000000
+
+    def test_deal_self_and_player(self):
+        dealer = Dealer(1000000)
+        player = Player("Eric", 1000)
+        deck = Deck()
+        count = len(deck)
+        dealer.deal_hand(dealer, deck)
+        dealer.deal_hand(player, deck)
+        assert len(dealer.get_hand()) == 2
+        assert len(player.get_hand()) == 2
+        assert len(deck) == count - 4
+        assert isinstance(dealer.peak_card(), Card)
 
 
 class TestGame:

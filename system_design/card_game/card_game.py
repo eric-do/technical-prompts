@@ -41,6 +41,9 @@ class Hand:
     def __len__(self):
         return len(self.__hand)
 
+    def __getitem__(self, position) -> Card:
+        return self.__hand[position]
+
     def get_hand(self) -> list[Card]:
         return self.__hand
 
@@ -73,24 +76,24 @@ class BlackJackHand(Hand):
 
     def get_score(self) -> int:
         score = 0
-        ace_count = 0
 
-        for rank, _ in self.get_hand():
-            score += self.values[rank]
-            if rank == "A":
-                ace_count += 1
+        cards = [self.values[rank] for rank, _ in self.get_hand()]
+        aces = [self.values[rank] for rank, _ in self.get_hand()
+                if rank == "A"]
 
-        while score > 21 and ace_count > 0:
-            score -= 10
-            ace_count -= 1
+        score += sum(cards)
+        for _ in aces:
+            if score > 21:
+                score -= 10
+
         return score
 
 
 class Player:
-    def __init__(self, funds=0):
+    def __init__(self, name: str = "Player", funds: int = 0):
+        self.name = name
         self.__hand = BlackJackHand()
         self.__funds = funds
-        self.hit = self.add_card
 
     def add_card(self, c: Card) -> None:
         self.__hand.add_card(c)
@@ -106,12 +109,38 @@ class Player:
 
 
 class Dealer(Player):
-    def __init__(self, funds):
-        super().__init__(funds)
+    def __init__(self, funds: int):
+        super().__init__("Dealer", funds)
 
-    def deal_hand(p: Player, d: Deck) -> None:
+    def deal_hand(self, p: Player, d: Deck) -> None:
         for i in range(2):
             p.add_card(d.remove_card())
 
-    def deal_card(p: Player, d: Deck) -> None:
+    def deal_card(self, p: Player, d: Deck) -> None:
         p.add_card(d.remove_card())
+
+    def peak_card(self) -> Card:
+        return self.get_hand()[0]
+
+
+class Game:
+    def __init__(self, funds: int):
+        self.dealer = Dealer(funds)
+        self.__players = []
+
+    def add_player(self) -> None:
+        name = input("Please enter your name")
+        funds = input("Please enter your starting funds")
+        p = Player(name, funds)
+        self.__players.append(p)
+        print("Player added.")
+
+    def get_players(self) -> list[Player]:
+        return self.__players
+
+    def start_new_game(self) -> None:
+        print("Welcome to Blackjack")
+        self.add_player()
+        self.dealer.deal_hand(self.dealer, self.__deck)
+        for p in self.players:
+            self.dealer.deal_hand(p, self.__deck)
