@@ -4,11 +4,8 @@
 # Restatement
 # Implement Blackjack using OOP
 
-from collections import namedtuple
 from typing import NamedTuple
 from random import shuffle
-
-# Card = namedtuple('Card', ['rank', 'suit'])
 
 
 class Card(NamedTuple):
