@@ -86,19 +86,18 @@ class BlackJackHand(Hand):
     def __init__(self):
         super().__init__()
 
-    def get_score(self) -> int:
-        score = 0
+    def score(self) -> int:
         cards = [self.values[rank] for rank, _ in self.get_hand()]
         aces = [self.values[rank] for rank, _ in self.get_hand()
                 if rank == "A"]
-        score += sum(cards)
+        score = sum(cards)
         for _ in aces:
             if score > 21:
                 score -= 10
         return score
 
     def is_busted(self) -> bool:
-        return self.get_score() > 21
+        return self.score() > 21
 
 
 class Player:
@@ -113,9 +112,6 @@ class Player:
     def get_hand(self) -> list[Card]:
         return self.__hand
 
-    def get_score(self) -> int:
-        return self.__hand.get_score()
-
     def get_funds(self) -> int:
         return self.__funds
 
@@ -126,10 +122,14 @@ class Dealer(Player):
 
     def deal_hand(self, p: Player, d: Deck) -> None:
         for i in range(2):
-            p.add_card(d.remove_card())
+            self.deal_card(p, d)
 
     def deal_card(self, p: Player, d: Deck) -> None:
         p.add_card(d.remove_card())
+
+    def play_game(self, deck) -> None:
+        while self.get_hand().score() < 17:
+            self.deal_card(self, deck)
 
     def peak_card(self) -> Card:
         return self.get_hand()[0]
@@ -147,23 +147,56 @@ class Game:
         self.player = p
         print("Player added.")
 
+    def get_player(self) -> Player:
+        return self.player
+
     def create_deck(self) -> None:
         self.__deck = Deck()
+        self.__deck.shuffle()
 
     def deal_hands(self) -> None:
         self.dealer.deal_hand(self.dealer, self.__deck)
         self.dealer.deal_hand(self.player, self.__deck)
+
+    def game_loop(self) -> None:
+        player_hand = self.player.get_hand()
         print('Your hand:')
-        print(self.player.get_hand())
+        print(player_hand)
+        print('Your score:', player_hand.score())
+        if player_hand.is_busted():
+            print('BUST')
+        else:
+            choice = input("Hit? [Y/N]\n").lower()
+            if choice == 'y':
+                self.dealer.deal_card(self.player, self.__deck)
+                self.game_loop()
+            else:
+                self.dealer.play_game(self.__deck)
+            self.show_result()
+            exit()
+
+    def show_result(self) -> None:
+        player_score = self.player.get_hand().score()
+        dealer_score = self.dealer.get_hand().score()
+        print('Dealer score:', dealer_score)
+        print('Player score:', player_score)
+        if player_score == 21 and dealer_score == 21:
+            print('DRAW')
+        elif player_score <= 21 and \
+            (dealer_score <= player_score or
+                self.dealer.get_hand().is_busted()):
+            print('YOU WIN')
+        else:
+            print('YOU LOSE')
 
     def start_new_game(self) -> None:
         self.is_active = True
         print("Welcome to Blackjack")
         self.add_player()
         self.create_deck()
-        self.__deck.shuffle()
         self.deal_hands()
+        self.game_loop()
 
 
-# game = Game()
-# game.start_new_game()
+game = Game()
+game.start_new_game()

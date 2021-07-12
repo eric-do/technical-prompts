@@ -1,4 +1,4 @@
-from card_game import Deck, Card, Dealer, Hand, BlackJackHand, Player
+from card_game import Deck, Card, Dealer, Hand, BlackJackHand, Player, Game
 
 
 class TestDeck:
@@ -53,20 +53,20 @@ class TestBlackJackHand:
 
         hand.add_card(Card('A', 'Spades'))
         hand.add_card(Card('K', 'Spades'))
-        assert hand.get_score() == 21
+        assert hand.score() == 21
         assert hand.is_busted() is False
 
         hand.add_card(Card('A', 'Diamonds'))
-        assert hand.get_score() == 12
+        assert hand.score() == 12
 
         hand.add_card(Card('5', 'Spades'))
-        assert hand.get_score() == 17
+        assert hand.score() == 17
 
         hand.add_card(Card('A', 'Hearts'))
-        assert hand.get_score() == 18
+        assert hand.score() == 18
 
         hand.add_card(Card('10', 'Hearts'))
-        assert hand.get_score() == 28
+        assert hand.score() == 28
         assert hand.is_busted() is True
 
 
@@ -82,7 +82,7 @@ class TestPlayer:
         p = Player("Eric", 1000)
         p.add_card(Card('A', 'Spades'))
         p.add_card(Card('K', 'Spades'))
-        assert p.get_score() == 21
+        assert p.get_hand().score() == 21
         assert len(p.get_hand()) == 2
 
 
@@ -107,4 +107,11 @@ class TestDealer:
 
 
 class TestGame:
-    pass
+
+    def test_game_initialization(self):
+        g = Game(1000000)
+        assert isinstance(g.dealer, Dealer)
+        assert g.is_active is False
+
+
+
