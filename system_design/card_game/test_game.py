@@ -112,6 +112,3 @@ class TestGame:
         g = Game(1000000)
         assert isinstance(g.dealer, Dealer)
         assert g.is_active is False
-
-
-
